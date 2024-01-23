@@ -144,10 +144,26 @@ namespace BlazorPOC_Net8Crud.Services
         {
             try
             {
-                var emp = EmpVMtoModelWraper(employeeVM);
 
-                _dbContext.Entry(emp).State = EntityState.Modified;
-                _dbContext.SaveChanges();
+                var emp = _dbContext.Employee.First(e=> e.Id == employeeVM.Id);
+                if (emp == null)
+                {
+                    return (false, "data not found");
+                }
+                else
+                {
+                    //_dbContext.Entry(emp).State = EntityState.Added;
+                    // _dbContext.Entry(emp).State = EntityState.Modified;
+                    emp.FirstName = employeeVM.FirstName;
+                    emp.LastName = employeeVM.LastName; 
+                    emp.Email = employeeVM.Email;
+                    emp.PhoneNo = employeeVM.PhoneNo;
+                    emp.Designation = employeeVM.Designation;
+                    _dbContext.Entry(emp).State = EntityState.Modified;
+                    _dbContext.SaveChanges();
+                    return (true, "Success");
+                }
+               
                 return (true, "Success");
             }
             catch (Exception ex)
