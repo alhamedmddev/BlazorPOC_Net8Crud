@@ -1,0 +1,81 @@
+﻿@page "/DeleteEmployee/{empId:int}"
+@inject NavigationManager NavigationManager
+@inject IEmployeeService _empService
+@rendermode InteractiveServer
+
+<h3>DeleteEmployee</h3>
+
+
+<div class="form-group">
+    <h4>Do you want to delete this user?</h4>
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>Name</td>
+                <td>@employeeVM.FirstName +" "+ @employeeVM.LastName </td>
+            </tr>
+            <tr>
+                <td>Designation</td>
+                <td>@employeeVM.Designation</td>
+            </tr>
+            <tr>
+                <td>Cell No</td>
+                <td>@employeeVM.PhoneNo</td>
+            </tr>
+            <tr>
+                <td>E-mail</td>
+                <td>@employeeVM.Email</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+@if (!string.IsNullOrEmpty(message))
+{
+
+    <p>@message</p>
+
+
+}
+
+<div class="form-group">
+    <input type="submit" value="Delete" @onclick="(async () => await RemoveUser(employeeVM.Id))" class="btn btn-danger" />
+    <input type="submit" value="Cancel" @onclick="(() => Cancel())" class="btn btn-warning" />
+</div>
+
+@code {
+    [Parameter]
+    public int empId { get; set; }
+    protected string Title = "Add";
+    public EmployeeVM employeeVM = new();
+    string message;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var result = await _empService.GetEmployeeByIDAsync(empId);
+        if (result.IsGetSuccess)
+        {
+            employeeVM = result.employeeVM;
+        }
+        else
+        {
+            message = "something wrong happend....! plz try again..";
+        }
+    }
+    protected async Task RemoveUser(int empID)
+    {
+        var result = await _empService.DeleteEMployeeAsync(empID);
+        if (result.IsGetSuccess)
+        {
+            Cancel();
+        }
+        else
+        {
+            message = result.message;
+        }
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/EmployeeList");
+    }
+}
