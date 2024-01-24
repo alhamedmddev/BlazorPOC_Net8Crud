@@ -11,8 +11,19 @@
     <DataAnnotationsValidator />
     @if (!string.IsNullOrEmpty(message))
     {
-
-        <p>@message</p>
+        if (message.ToLower().Contains("success"))
+        {
+            <div class="alert alert-success" role="alert">
+                <p>@message</p>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-danger" role="alert">
+                <p>@message</p>
+            </div>
+        }
+        
 
 
     }

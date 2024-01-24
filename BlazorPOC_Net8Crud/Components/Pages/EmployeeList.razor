@@ -33,6 +33,13 @@
 }
 else
 {
+    @if (string.IsNullOrEmpty(message))
+    {
+        <div class="alert alert-danger" role="alert">
+            <p>@message</p>
+        </div>
+
+    }
     <table class="table table-striped align-middle table-bordered">
         <thead class="table-success">
             <tr>
@@ -74,6 +81,7 @@ else
     List<EmployeeVM> empList = new List<EmployeeVM>();
     protected string SearchString { get; set; } = string.Empty;
     protected List<EmployeeVM> searchUserData = new();
+    string message;
     protected override async Task OnInitializedAsync()
     {
         await GetUser();
@@ -86,6 +94,10 @@ else
         {
             empList = result.employeeVM;
             searchUserData = empList;
+        }
+        else
+        {
+            message = "something went wrong please try again...!";   
         }
         
        
