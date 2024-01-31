@@ -9,5 +9,7 @@ namespace BlazorPOC_Net8Crud.Data
 
         public DbSet<Employee> Employee { get; set; }
 
+        public DbSet<User> User { get; set; }
+
     }
 }
