@@ -3,12 +3,22 @@
 @inject IEmployeeService _empService
 @rendermode InteractiveServer
 
-<h3>DeleteEmployee</h3>
+<div class="ma-6 d-flex justify-center">
+    <MudChip Color="Color.Primary">
+        <h3>Delete Employee</h3>
+    </MudChip>
+</div>
 
 
-<div class="form-group">
-    <h4>Do you want to delete this user?</h4>
+<div class="ma-6 d-flex p-3  justify-center border-1" style="background-color:#efefef">
+    
+    <MudCard Width="500px">
+        <MudForm Model="employeeVM" @ref="form">
+            <MudCardContent>
+                <MudText Typo="Typo.h6">Do you want to delete this Employee?</MudText>
 
+
+          
     @if (!string.IsNullOrEmpty(message))
     {
         if (message.ToLower().Contains("success"))
@@ -23,37 +33,50 @@
                 <p>@message</p>
             </div>
         }
-
-
-
     }
-    <table class="table">
-        <tbody>
-            <tr>
-                <td>Name</td>
-                <td>@employeeVM.FirstName +" "+ @employeeVM.LastName </td>
-            </tr>
-            <tr>
-                <td>Designation</td>
-                <td>@employeeVM.Designation</td>
-            </tr>
-            <tr>
-                <td>Cell No</td>
-                <td>@employeeVM.PhoneNo</td>
-            </tr>
-            <tr>
-                <td>E-mail</td>
-                <td>@employeeVM.Email</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+
+
+        <MudTextField @bind-Value="employeeVM.FirstName"
+                      For="@(() => employeeVM.FirstName)"
+                      Immediate="true"
+                      Label="First Name"
+                      Variant="Variant.Filled" />
+
+        <MudTextField @bind-Value="employeeVM.LastName"
+                      For="@(() => employeeVM.LastName)"
+                      Immediate="true"
+                      Label="Last Name"
+                      Variant="Variant.Filled" />
+        <MudTextField @bind-Value="employeeVM.PhoneNo"
+                      For="@(() => employeeVM.PhoneNo)"
+                      Immediate="true"
+                      Label="Phone No"
+                      Variant="Variant.Filled" />
+        <MudTextField @bind-Value="employeeVM.Email"
+                      For="@(() => employeeVM.Email)"
+                      Immediate="true"
+                      Label="Email"
+                      Variant="Variant.Filled" />
+        <MudTextField @bind-Value="employeeVM.Designation"
+                      For="@(() => employeeVM.Designation)"
+                      Immediate="true"
+                      Label="Designation"
+                      Variant="Variant.Filled" />
+    
 
 
 
-<div class="form-group">
-    <input type="submit" value="Delete" @onclick="(async () => await RemoveUser(employeeVM.Id))" class="btn btn-danger" />
-    <input type="submit" value="Cancel" @onclick="(() => Cancel())" class="btn btn-warning" />
+
+
+
+     <MudCardActions>
+                    <MudButton Variant="Variant.Filled" @onclick="(async () => await RemoveUser(employeeVM.Id))" Color="Color.Secondary">Delete</MudButton>
+        @* <input type="submit" value="Delete" @onclick="(async () => await RemoveUser(employeeVM.Id))" class="btn btn-danger" /> *@
+       @*  <input type="submit" value="Cancel" @onclick="(() => Cancel())" class="btn btn-warning" /> *@
+    </MudCardActions>
+            </MudCardContent>
+        </MudForm>
+    </MudCard>
 </div>
 
 @code {
@@ -62,6 +85,7 @@
     protected string Title = "Add";
     public EmployeeVM employeeVM = new();
     string message;
+    MudForm form;
 
     protected override async Task OnParametersSetAsync()
     {
