@@ -4,70 +4,70 @@
 @inject IEmployeeService _empService
 @rendermode InteractiveServer
 
+<div class="ma-6 d-flex justify-center">
+    <MudChip Color="Color.Primary">
+        <h3>AddEmployee</h3>
+    </MudChip>
+</div>
 
-<h3>AddEmployee</h3>
+<div class="ma-6 d-flex  justify-center border-1" style="background-color:#efefef">
+    <MudCard Width="500px">
+        <MudForm Model="employeeVM" @ref="form">
+             <MudCardContent>
+                @if (!string.IsNullOrEmpty(message))
+                {
+                    if (message.ToLower().Contains("success"))
+                    {
+                        <div class="alert alert-success" role="alert">
+                            <p>@message</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <p>@message</p>
+                        </div>
+                    }
 
-<EditForm Model="@employeeVM" OnValidSubmit="SaveUser">
-    <DataAnnotationsValidator />
-    @if (!string.IsNullOrEmpty(message))
-    {
-        if (message.ToLower().Contains("success"))
-        {
-            <div class="alert alert-success" role="alert">
-                <p>@message</p>
-            </div>
-        }
-        else
-        {
-            <div class="alert alert-danger" role="alert">
-                <p>@message</p>
-            </div>
-        }
-        
 
 
-    }
+                }
+               
+                <MudTextField @bind-Value="employeeVM.FirstName"
+                              For="@(() => employeeVM.FirstName)"
+                              Immediate="true"
+                              Label="First Name"
+                              Variant="Variant.Filled" />
 
-    <div class="mb-3">
-        <label for="Name" class="form-label">First Name</label>
-        <div class="col-md-4">
-            <InputText class="form-control" @bind-Value="employeeVM.FirstName" />
-        </div>
-        <ValidationMessage For="@(() => employeeVM.FirstName)" />
-    </div>
-    <div class="mb-3">
-        <label for="Address" class="form-label">Last Name</label>
-        <div class="col-md-4">
-            <InputText class="form-control" @bind-Value="employeeVM.LastName" />
-        </div>
-        <ValidationMessage For="@(() => employeeVM.LastName)" />
-    </div>
-    <div class="mb-3">
-        <label for="Cellnumber" class="form-label">Phone No</label>
-        <div class="col-md-4">
-            <InputText class="form-control" @bind-Value="employeeVM.PhoneNo" />
-        </div>
-        <ValidationMessage For="@(() => employeeVM.PhoneNo)" />
-    </div>
-    <div class="mb-3">
-        <label for="Emailid" class="form-label">E-mail</label>
-        <div class="col-md-4">
-            <InputText class="form-control" @bind-Value="employeeVM.Email" />
-        </div>
-        <ValidationMessage For="@(() => employeeVM.Email)" />
-    </div>
-    <div class="mb-3">
-        <label for="Emailid" class="form-label">Designation</label>
-        <div class="col-md-4">
-            <InputText class="form-control" @bind-Value="employeeVM.Designation" />
-        </div>
-        <ValidationMessage For="@(() => employeeVM.Designation)" />
-    </div>
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Save</button>
-        <button class="btn btn-light" @onclick="Cancel">Cancel</button>
-    </div>
-</EditForm>
+                <MudTextField @bind-Value="employeeVM.LastName"
+                              For="@(() => employeeVM.LastName)"
+                              Immediate="true"
+                              Label="Last Name"
+                              Variant="Variant.Filled" />
+                <MudTextField @bind-Value="employeeVM.PhoneNo"
+                              For="@(() => employeeVM.PhoneNo)"
+                              Immediate="true"
+                              Label="Phone No" 
+                              Variant="Variant.Filled" />
+                <MudTextField @bind-Value="employeeVM.Email"
+                              For="@(() => employeeVM.Email)"
+                              Immediate="true"
+                              Label="Email" 
+                              Variant="Variant.Filled" />
+                <MudTextField @bind-Value="employeeVM.Designation"
+                              For="@(() => employeeVM.Designation)"
+                              Immediate="true"
+                              Label="Designation"
+                              Variant="Variant.Filled" />
+
+                 
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="SaveUser">Save</MudButton>
+                    </MudCardActions>
+            </MudCardContent>
+        </MudForm>
+    </MudCard>
+</div>
 
 
 @code {
@@ -76,6 +76,7 @@
     protected string Title = "Add";
     public EmployeeVM employeeVM = new();
     string message;
+    MudForm form;
 
     protected override async Task OnParametersSetAsync()
     {

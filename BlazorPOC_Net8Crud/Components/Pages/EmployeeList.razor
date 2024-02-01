@@ -1,88 +1,85 @@
 ﻿@page "/EmployeeList"
-@attribute [Authorize]
+@* @attribute [Authorize] *@
 @inject IEmployeeService _empService
 @rendermode InteractiveServer
 
 
-<PageTitle>Employee Details</PageTitle>
-<h3>EmployeeList</h3>
+<MudCard Class="mt-5">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h5">Employee Details</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+     <MudCardContent>
 
-<div class="row">
-    <div class="col-md-6">
-        <a href='/addemployee' class="btn btn-primary" role="button">
-            <i class="fas fa-user-plus"></i>
-            Add Employee
-        </a>
-    </div>j
-    <div class="input-group col">
-        <input type="text" class="form-control" placeholder="Search user by name"
-               @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
-        @if (SearchString.Length > 0)
-        {
-            <div class="input-group-append">
-                <button class="btn btn-danger" @onclick="ResetSearch">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        }
-    </div>
-</div>
+<MudLink href='/addemployee' Class="border-solid border-2 mud-border-primary pa-4">Add Employee</MudLink>
+<MudTable Items="@Employees" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<EmployeeVM,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <ToolBarContent>
 
-@if (empList.Count == 0)
-{
-    <p> <em>Loading employee list.....</em> </p>
-}
-else
-{
-    @if (!string.IsNullOrEmpty(message))
-    {
-        <div class="alert alert-danger" role="alert">
-            <p>@message</p>
-        </div>
-
-    }
-    <table class="table table-striped align-middle table-bordered">
-        <thead class="table-success">
-            <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Designation</th>
-                <th>Cell No</th>
-                <th>E-mail</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var emp in empList)
-            {
-                <tr>
-                    <td>@emp.Id</td>
-                    <td>@emp.FirstName</td>
-                    <td>@emp.LastName</td>
-                    <td>@emp.Designation</td>
-                    <td>@emp.PhoneNo</td>
-                    <td>@emp.Email</td>
-                    <td>
-                        <a href='/editemployee/@emp.Id' class="btn btn-outline-dark" role="button">
+        <MudText Typo="Typo.h6">Employee List</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>FirstName</MudTh>
+        <MudTh>LastName</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>PhoneNo</MudTh>
+        <MudTh>Designation</MudTh>
+                <MudTh>Edit</MudTh>
+                <MudTh>Delete</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+            <MudTd DataLabel="First Name">@context.FirstName</MudTd>
+            <MudTd DataLabel="Last 0Name">@context.LastName</MudTd>
+            <MudTd DataLabel="Email">@context.Email</MudTd>
+            <MudTd DataLabel="Phone No">@context.PhoneNo</MudTd>
+            <MudTd DataLabel="Designation">@context.Designation</MudTd>
+            <MudTd>
+                        <MudLink href="@getlink("edit",context.Id)" Variant="Variant.Filled" Color="Color.Primary">
                             Edit
-                        </a>
-                        <a href='/DeleteEmployee/@emp.Id' class="btn btn-outline-danger" role="button">
+                        </MudLink>
+            </MudTd>
+            <MudTd>
+                        <MudLink href="@getlink("delete",context.Id)" Variant="Variant.Filled" Color="Color.Secondary">
                             Delete
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
+                        </MudLink>
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+    <div class="d-flex flex-wrap mt-4">
+        <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
+        <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
+        <MudSwitch @bind-Checked="@striped" Color="Color.Tertiary">Striped</MudSwitch>
+        <MudSwitch @bind-Checked="@bordered" Color="Color.Warning">Bordered</MudSwitch>
 
-    </table>
-}
+        <MudSpacer />
+        <div style="min-width:200px;">
+            <MudText Inline="true" Class="align-self-center">Selected1: @selectedItem1?.FirstName</MudText>
+        </div>
+    </div>
+</MudCardContent>
+</MudCard>
+    
 
-@code {
-    List<EmployeeVM> empList = new List<EmployeeVM>();
+    @code {
+    // List<EmployeeVM> empList = new List<EmployeeVM>();
     protected string SearchString { get; set; } = string.Empty;
+
     protected List<EmployeeVM> searchUserData = new();
     string message;
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+    private string searchString1 = "";
+    private EmployeeVM selectedItem1 = null;
+    private HashSet<EmployeeVM> selectedItems = new HashSet<EmployeeVM>();
+
+    private IEnumerable<EmployeeVM> Employees = new List<EmployeeVM>();
     protected override async Task OnInitializedAsync()
     {
         await GetUser();
@@ -93,33 +90,41 @@ else
         var result = await _empService.GetEmployeeAsync();
         if (result.IsGetSuccess)
         {
-            empList = result.employeeVM;
-            searchUserData = empList;
+            Employees = result.employeeVM;
+
         }
         else
         {
             message = "something went wrong please try again...!";   
         }
-        
-       
+
+
     }
-    protected void FilterUser()
+
+    private bool FilterFunc1(EmployeeVM emp) => FilterFunc(emp, searchString1);
+
+    private bool FilterFunc(EmployeeVM emp, string searchString)
     {
-        if (!string.IsNullOrEmpty(SearchString))
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (emp.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (emp.FirstName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{emp.PhoneNo} {emp.LastName} {emp.Designation}".Contains(searchString))
+            return true;
+        return false;
+    }
+    public string getlink(string type, int value)
+    {
+        if (type == "edit")
         {
-            empList = searchUserData
-                .Where(x => x.FirstName.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
-                .ToList();
+            return "/editemployee/" + value.ToString();
         }
         else
         {
-            empList = searchUserData;
+            return "/DeleteEmployee/" + value.ToString();
         }
-    }
-    public void ResetSearch()
-    {
-        SearchString = string.Empty;
-        empList = searchUserData;
     }
 
 }
