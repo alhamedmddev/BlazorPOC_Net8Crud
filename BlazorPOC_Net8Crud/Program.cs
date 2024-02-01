@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,7 @@ builder.Services.AddAuth0WebAppAuthentication(options =>
     options.Domain = builder.Configuration["Auth0:Domain"];
     options.ClientId = builder.Configuration["Auth0:ClientId"];
 });
+builder.Services.AddMudServices();
 
 
 
